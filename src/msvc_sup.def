@@ -19,4 +19,6 @@ EXPORTS
 
     sysconf
     pgm_if_nametoindex
+    rand_rl
+    rand_r
     

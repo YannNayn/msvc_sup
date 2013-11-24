@@ -95,6 +95,8 @@ int munlock(const void *addr, size_t len);
 size_t sysconf(int type);
 
 unsigned int pgm_if_nametoindex (	const char* ifname);
+long long rand_rl(unsigned long long* seed);
+int rand_r(unsigned int* seed);
 #ifdef __cplusplus
 }
 #endif
