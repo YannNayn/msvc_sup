@@ -851,7 +851,7 @@ freeifaddrs (
  *
  * Requires Windows 2000 or Wine 1.0.
  */
-
+typedef int sa_family_t;
 static
 unsigned					/* type matching if_nametoindex() */
 _pgm_getadaptersinfo_nametoindex (
