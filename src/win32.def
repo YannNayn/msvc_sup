@@ -1,0 +1,20 @@
+EXPORTS
+    getifaddrs
+    freeifaddrs
+    gettimeofday
+    posix_fallocate
+    ftruncate
+    mkstemp
+    gmtime_r
+    localtime_r
+    localtime_rl
+
+    mmap
+
+    munmap
+    mprotect
+    msync
+    mlock
+    munlock
+
+    sysconf
