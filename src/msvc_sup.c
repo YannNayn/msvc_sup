@@ -1028,10 +1028,11 @@ pgm_if_nametoindex (
 {
 	if(ifname != NULL) return 0;
 
-#ifdef _WIN32_WINNT  >= 0x0600
+#if _WIN32_WINNT  >= 0x0600
 /* Vista+ implements if_nametoindex for IPv6 */
 	return if_nametoindex (ifname);
 #else
+#pragma message("pgm_if_nametoindex uses _pgm_getadaptersaddresses_nametoindex")    
 	return _pgm_getadaptersaddresses_nametoindex (iffamily, ifname);
 #endif
 }
