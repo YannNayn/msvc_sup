@@ -93,8 +93,8 @@ int munlock(const void *addr, size_t len);
 #define _SC_AVPHYS_PAGES 4
 #define _SC_PAGE_SIZE _SC_PAGESIZE
 size_t sysconf(int type);
-typedef int sa_family_t;
-unsigned int pgm_if_nametoindex (	const sa_family_t iffamily,	const char* ifname);
+
+unsigned int pgm_if_nametoindex (	const char* ifname);
 #ifdef __cplusplus
 }
 #endif

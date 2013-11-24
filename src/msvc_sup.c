@@ -1022,18 +1022,23 @@ _pgm_getadaptersaddresses_nametoindex (
 
 unsigned int					/* type matching if_nametoindex() */
 pgm_if_nametoindex (
-	const sa_family_t	iffamily,
 	const char*		ifname
         )
 {
+#if _WIN32_WINNT   < 0x0600    
+    unsigned int index;
+#endif    
 	if(ifname != NULL) return 0;
-
+    
 #if _WIN32_WINNT  >= 0x0600
 /* Vista+ implements if_nametoindex for IPv6 */
 	return if_nametoindex (ifname);
 #else
 #pragma message("pgm_if_nametoindex uses _pgm_getadaptersaddresses_nametoindex")    
-	return _pgm_getadaptersaddresses_nametoindex (iffamily, ifname);
+	index = _pgm_getadaptersaddresses_nametoindex (AF_INET, ifname);
+    if (index>0)
+        return index;
+    return _pgm_getadaptersaddresses_nametoindex (AF_INET6, ifname);
 #endif
 }
 
