@@ -1014,7 +1014,7 @@ _pgm_getadaptersaddresses_nametoindex (
 		_pgm_heap_free (pAdapterAddresses);
 	return 0;
 }
-#endif /* _WIN32 */
+
 
 /* Retrieve interface index for a specified adapter name.
  * On error returns zero, no errors are defined.
