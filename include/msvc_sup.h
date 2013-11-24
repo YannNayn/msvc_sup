@@ -49,6 +49,36 @@ struct tm * gmtime_r(const time_t *clock, struct tm *result);
 struct tm * localtime_r(const time_t *clock, struct tm *result);
 struct tm * localtime_rl(const long *clock, struct tm *result);
 
+#define PROT_NONE       0
+#define PROT_READ       1
+#define PROT_WRITE      2
+#define PROT_EXEC       4
+
+#define MAP_FILE        0
+#define MAP_SHARED      1
+#define MAP_PRIVATE     2
+#define MAP_TYPE        0xf
+#define MAP_FIXED       0x10
+#define MAP_ANONYMOUS   0x20
+#define MAP_ANON        MAP_ANONYMOUS
+
+#define MAP_FAILED      ((void *)-1)
+
+/* Flags for msync. */
+#define MS_ASYNC        1
+#define MS_SYNC         2
+#define MS_INVALIDATE   4
+
+#ifndef MAP_NORESERVE
+#  ifdef MAP_AUTORESRV
+#    if (defined(__sgi) && defined(_COMPILER_VERSION))
+#      define MAP_NORESERVE MAP_AUTORESRV
+#    endif
+#  else
+#    define MAP_NORESERVE 0
+#  endif
+#endif
+
 void* mmap(void *addr, size_t len, int prot, int flags, int fildes, off_t off);
 
 int munmap(void *addr, size_t len);
