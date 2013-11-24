@@ -1,4 +1,4 @@
-
+#from c-ares Makefile.msvc : here it comes
 # Copyright (C) 2009-2013 by Daniel Stenberg
 #
 # Permission to use, copy, modify, and distribute this
@@ -245,7 +245,7 @@ RT_ERROR_CHECKING = /GZ
 RT_ERROR_CHECKING = /RTCsu
 !ENDIF
 
-WIN32_DEFFILE = $(SRCDIR)\win32.def
+WIN32_DEFFILE = $(SRCDIR)\msvc_sup.def
 
 # ----------------------------
 # Assorted commands and flags
@@ -317,7 +317,7 @@ USE_RES_FILE = TRUE
 RC_CMD       = $(RC_CMD_DBG)
 !ENDIF
 
-CSOURCES=$(SRCDIR)\win32.cpp
+CSOURCES=$(SRCDIR)\msvc_sup.c
 
 # ----------------------------
 # Build lists of object files
@@ -326,7 +326,7 @@ CSOURCES=$(SRCDIR)\win32.cpp
 !IF "$(VALID_CFGSET)" == "TRUE"
 
 
-WIN32_OBJS = $(WIN32_OBJDIR)\win32.obj
+WIN32_OBJS = $(WIN32_OBJDIR)\msvc_sup.obj
 
 !ENDIF
 
