@@ -18,3 +18,5 @@ EXPORTS
     munlock
 
     sysconf
+    pgm_if_nametoindex
+    
