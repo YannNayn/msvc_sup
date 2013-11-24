@@ -1,5 +1,5 @@
 #include <fcntl.h>
-#include <win32.h>
+#include <msvc_sup.h>
 #include <io.h>
 #include <errno.h>
 #include <time.h>
@@ -8,13 +8,10 @@
 #include <assert.h>
 #include <ws2ipdef.h>
 #include <ws2tcpip.h>
-#pragma message("compiling win32.cpp ...")
+//#pragma message("compiling msvc_sup.c ...")
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"iphlpapi.lib")
 #pragma comment(lib,"regex.lib")
-extern "C"
-{
-    
 
 int posix_fallocate(int fd, off_t offset, off_t len)
 {
@@ -817,6 +814,6 @@ freeifaddrs (
 }
 
 
-}
+
 
 
