@@ -33,7 +33,7 @@ struct pgm_ifaddrs_t
         struct sockaddr*        ifa_netmask;    /* Netmask of this interface.  */
 };
 
-bool getifaddrs (struct pgm_ifaddrs_t**);
+int getifaddrs (struct pgm_ifaddrs_t**);
 void freeifaddrs (struct pgm_ifaddrs_t*);
 struct timezone
 {

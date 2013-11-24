@@ -13,6 +13,13 @@
 #pragma comment(lib,"iphlpapi.lib")
 #pragma comment(lib,"regex.lib")
 
+#ifndef TRUE
+#   define TRUE 1
+#endif
+#ifndef FALSE
+#   define FALSE 0
+#endif
+
 int posix_fallocate(int fd, off_t offset, off_t len)
 {
     __int64 pos = _telli64(fd);
@@ -21,16 +28,19 @@ int posix_fallocate(int fd, off_t offset, off_t len)
     __int64  wlen = offset+len-flen;
     if (wlen<0)
         return 0;
-    static const char buf[65536] = {};
-    while (wlen > 0) {
-        unsigned int now = 65536;
-        if (wlen < now)
-            now = wlen;
-        _write(fd,buf, now); // allowed to fail; this function is advisory anyway
-        wlen -= now;
+    else
+    {
+        static const char buf[65536] = "";
+        while (wlen > 0) {
+            unsigned int now = 65536;
+            if (wlen < now)
+                now = wlen;
+            _write(fd,buf, now); // allowed to fail; this function is advisory anyway
+            wlen -= now;
+        }
+        _lseeki64(fd,pos,SEEK_SET);
+        _commit(fd);
     }
-    _lseeki64(fd,pos,SEEK_SET);
-    _commit(fd);
     return 0;
 }
 int
@@ -406,13 +416,14 @@ pgm_sockaddr_pton (
 	struct sockaddr* dst		/* will error on wrong size */
 	)
 {
+    int status;
 	struct addrinfo hints = {0}, *result = NULL;
     hints.ai_family	= AF_UNSPEC;
     hints.ai_socktype	= SOCK_STREAM;		/* not really */
     hints.ai_protocol	= IPPROTO_TCP;		/* not really */
     hints.ai_flags	= AI_NUMERICHOST;
 	
-	const int status = getaddrinfo (src, NULL, &hints, &result);
+	status = getaddrinfo (src, NULL, &hints, &result);
 	if (0 == status) {
 		memcpy (dst, result->ai_addr, result->ai_addrlen);
 		freeaddrinfo (result);
@@ -468,11 +479,15 @@ _pgm_heap_free (
  */
 
 static
-bool
+int
 _pgm_getadaptersinfo (
         struct pgm_ifaddrs_t**  ifap
         )
 {
+        int n, k;
+        struct _pgm_ifaddrs_t* ifa;
+        struct _pgm_ifaddrs_t* ift;
+        unsigned i;
         DWORD dwRet;
         ULONG ulOutBufLen = DEFAULT_BUFFER_SIZE;
         PIP_ADAPTER_INFO pAdapterInfo = NULL;
@@ -481,7 +496,7 @@ _pgm_getadaptersinfo (
 /* loop to handle interfaces coming online causing a buffer overflow
  * between first call to list buffer length and second call to enumerate.
  */
-        for (unsigned i = MAX_TRIES; i; i--)
+        for (i = MAX_TRIES; i; i--)
         {
                 //pgm_debug ("IP_ADAPTER_INFO buffer length %lu bytes.", ulOutBufLen);
                 pAdapterInfo = (IP_ADAPTER_INFO*)_pgm_heap_alloc (ulOutBufLen);
@@ -521,12 +536,13 @@ _pgm_getadaptersinfo (
         }
 
 /* count valid adapters */
-        int n = 0, k = 0;
+        n = 0, k = 0;
         for (pAdapter = pAdapterInfo;
                  pAdapter;
                  pAdapter = pAdapter->Next)
         {
-                for (IP_ADDR_STRING *pIPAddr = &pAdapter->IpAddressList;
+                IP_ADDR_STRING *pIPAddr;
+                for (pIPAddr = &pAdapter->IpAddressList;
                          pIPAddr;
                          pIPAddr = pIPAddr->Next)
                 {
@@ -540,15 +556,16 @@ _pgm_getadaptersinfo (
         //pgm_debug ("GetAdaptersInfo() discovered %d interfaces.", n);
 
 /* contiguous block for adapter list */
-        struct _pgm_ifaddrs_t* ifa = (struct _pgm_ifaddrs_t*) malloc(sizeof(struct _pgm_ifaddrs_t) * n);
-        struct _pgm_ifaddrs_t* ift = ifa;
+        ifa = (struct _pgm_ifaddrs_t*) malloc(sizeof(struct _pgm_ifaddrs_t) * n);
+        ift = ifa;
 
 /* now populate list */
         for (pAdapter = pAdapterInfo;
                  pAdapter;
                  pAdapter = pAdapter->Next)
         {
-                for (IP_ADDR_STRING *pIPAddr = &pAdapter->IpAddressList;
+                IP_ADDR_STRING *pIPAddr;
+                for (pIPAddr = &pAdapter->IpAddressList;
                          pIPAddr;
                          pIPAddr = pIPAddr->Next)
                 {
@@ -557,7 +574,7 @@ _pgm_getadaptersinfo (
                                 continue;
 
 /* address */
-                        ift->_ifa.ifa_addr = (sockaddr*)&ift->_addr;
+                        ift->_ifa.ifa_addr = (struct sockaddr*)&ift->_addr;
                         assert(1 == pgm_sockaddr_pton (pIPAddr->IpAddress.String, ift->_ifa.ifa_addr));
 
 /* name */
@@ -572,7 +589,7 @@ _pgm_getadaptersinfo (
                                 ift->_ifa.ifa_flags |= IFF_LOOPBACK;
 
 /* netmask */
-                        ift->_ifa.ifa_netmask = (sockaddr*)&ift->_netmask;
+                        ift->_ifa.ifa_netmask = (struct sockaddr*)&ift->_netmask;
                         assert(1 == pgm_sockaddr_pton (pIPAddr->IpMask.String, ift->_ifa.ifa_netmask));
 
 /* next */
@@ -590,18 +607,22 @@ _pgm_getadaptersinfo (
 }
 
 static
-bool
+int
 _pgm_getadaptersaddresses (
         struct pgm_ifaddrs_t**  ifap
         )
 {
+        struct _pgm_ifaddrs_t* ifa;
+        struct _pgm_ifaddrs_t* ift;
+        unsigned i;
+        int n, k;
         DWORD dwSize = DEFAULT_BUFFER_SIZE, dwRet;
         IP_ADAPTER_ADDRESSES *pAdapterAddresses = NULL, *adapter;
 
 /* loop to handle interfaces coming online causing a buffer overflow
  * between first call to list buffer length and second call to enumerate.
  */
-        for (unsigned i = MAX_TRIES; i; i--)
+        for (i = MAX_TRIES; i; i--)
         {
                 //pgm_debug ("IP_ADAPTER_ADDRESSES buffer length %lu bytes.", dwSize);
                 pAdapterAddresses = (IP_ADAPTER_ADDRESSES*)_pgm_heap_alloc (dwSize);
@@ -649,12 +670,13 @@ _pgm_getadaptersaddresses (
         }
 
 /* count valid adapters */
-        int n = 0, k = 0;
+        n = 0, k = 0;
         for (adapter = pAdapterAddresses;
                  adapter;
                  adapter = adapter->Next)
         {
-                for (IP_ADAPTER_UNICAST_ADDRESS *unicast = adapter->FirstUnicastAddress;
+                IP_ADAPTER_UNICAST_ADDRESS *unicast;
+                for (unicast = adapter->FirstUnicastAddress;
                          unicast;
                          unicast = unicast->Next)
                 {
@@ -670,8 +692,8 @@ _pgm_getadaptersaddresses (
         }
 
 /* contiguous block for adapter list */
-        struct _pgm_ifaddrs_t* ifa = (struct _pgm_ifaddrs_t*) malloc(sizeof(struct _pgm_ifaddrs_t) * n);
-        struct _pgm_ifaddrs_t* ift = ifa;
+        ifa = (struct _pgm_ifaddrs_t*) malloc(sizeof(struct _pgm_ifaddrs_t) * n);
+        ift = ifa;
 
 /* now populate list */
         for (adapter = pAdapterAddresses;
@@ -679,10 +701,15 @@ _pgm_getadaptersaddresses (
                  adapter = adapter->Next)
         {
                 int unicastIndex = 0;
-                for (IP_ADAPTER_UNICAST_ADDRESS *unicast = adapter->FirstUnicastAddress;
+                IP_ADAPTER_UNICAST_ADDRESS *unicast;
+                for (unicast = adapter->FirstUnicastAddress;
                          unicast;
                          unicast = unicast->Next, ++unicastIndex)
                 {
+                        IP_ADAPTER_PREFIX *prefix;
+                        int prefixIndex;
+                        ULONG prefixLength;
+                        ULONG i,j;
 /* ensure IP adapter */
                         if (AF_INET != unicast->Address.lpSockaddr->sa_family &&
                             AF_INET6 != unicast->Address.lpSockaddr->sa_family)
@@ -691,7 +718,7 @@ _pgm_getadaptersaddresses (
                         }
 
 /* address */
-                        ift->_ifa.ifa_addr = (sockaddr*)&ift->_addr;
+                        ift->_ifa.ifa_addr = (struct sockaddr*)&ift->_addr;
                         memcpy (ift->_ifa.ifa_addr, unicast->Address.lpSockaddr, unicast->Address.iSockaddrLength);
 
 /* name */
@@ -710,12 +737,12 @@ _pgm_getadaptersaddresses (
                                 ift->_ifa.ifa_flags |= IFF_MULTICAST;
 
 /* netmask */
-                        ift->_ifa.ifa_netmask = (sockaddr*)&ift->_netmask;
+                        ift->_ifa.ifa_netmask = (struct sockaddr*)&ift->_netmask;
 
 /* pre-Vista must hunt for matching prefix in linked list, otherwise use OnLinkPrefixLength */
-                        int prefixIndex = 0;
-                        ULONG prefixLength = 0;
-                        for (IP_ADAPTER_PREFIX *prefix = adapter->FirstPrefix;
+                        prefixIndex = 0;
+                        prefixLength = 0;
+                        for (prefix = adapter->FirstPrefix;
                                 prefix;
                                 prefix = prefix->Next, ++prefixIndex)
                         {
@@ -741,7 +768,7 @@ _pgm_getadaptersaddresses (
                                         //pgm_trace (PGM_LOG_ROLE_NETWORK,_("IPv6 adapter %s prefix length is 0, overriding to 128."), adapter->AdapterName);
                                         prefixLength = 128;
                                 }
-                                for (ULONG i = prefixLength, j = 0; i > 0; i -= 8, ++j)
+                                for (i = prefixLength, j = 0; i > 0; i -= 8, ++j)
                                 {
                                         ((struct sockaddr_in6*)ift->_ifa.ifa_netmask)->sin6_addr.s6_addr[ j ] = i >= 8 ? 0xff : (ULONG)(( 0xffU << ( 8 - i ) ) & 0xffU );
                                 }
@@ -767,7 +794,7 @@ _pgm_getadaptersaddresses (
  * returns FALSE on failure and sets error appropriately.
  */
 
-bool
+int
 getifaddrs (struct pgm_ifaddrs_t**  ifap)
 {
         assert(NULL != ifap);
