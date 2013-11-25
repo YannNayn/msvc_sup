@@ -22,5 +22,6 @@ EXPORTS
     rand_rl
     rand_r
     nanosleep
+    sigaction
     
     

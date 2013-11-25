@@ -110,6 +110,36 @@ typedef struct timespec {               /* definition per POSIX.4 */
 
 
 int nanosleep (const struct timespec *requested_delay,struct timespec *remaining_delay);
+ 
+ /* POSIX emulation layer for Windows.
+*
+* Copyright (C) 2008-2013 Anope Team <team@anope.org>
+*
+* Please read COPYING and README for further details.
+*
+* Based on the original code of Epona by Lara.
+* Based on the original code of Services by Andy Church.
+*/
+
+#ifndef SIGHUP
+# define SIGHUP -1
+#endif
+#ifndef SIGPIPE
+# define SIGPIPE -1
+#endif
+
+#ifndef _SIGACTION_DEFINED
+#define _SIGACTION_DEFINED
+struct sigaction
+{
+    void (*sa_handler)(int);
+    int sa_flags;
+    int sa_mask;
+};
+#endif //_SIGACTION_DEFINED
+
+int sigaction(int sig, struct sigaction *action, struct sigaction *old);
+
 #ifdef __cplusplus
 }
 #endif
