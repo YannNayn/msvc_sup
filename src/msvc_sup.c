@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <ws2ipdef.h>
 #include <ws2tcpip.h>
+#include <signal.h>
 //#pragma message("compiling msvc_sup.c ...")
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"iphlpapi.lib")
