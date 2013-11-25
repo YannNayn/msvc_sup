@@ -100,10 +100,14 @@ long long rand_rl(unsigned long long* seed);
 int rand_r(unsigned int* seed);
 
 
+#ifndef _TIMESPEC_DEFINED
+#define _TIMESPEC_DEFINED
 typedef struct timespec {               /* definition per POSIX.4 */
          time_t          tv_sec;         /* seconds */
          long            tv_nsec;        /* and nanoseconds */
  } timespec_t;
+#endif /* _TIMESPEC_DEFINED */
+
 
 int nanosleep (const struct timespec *requested_delay,struct timespec *remaining_delay);
 #ifdef __cplusplus
