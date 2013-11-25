@@ -1105,7 +1105,7 @@ int
 nanosleep (const struct timespec *requested_delay,
            struct timespec *remaining_delay)
 {
-  static bool initialized;
+  static int initialized =0;
   /* Number of performance counter increments per nanosecond,
      or zero if it could not be determined.  */
   static double ticks_per_nanosecond;
@@ -1129,7 +1129,7 @@ nanosleep (const struct timespec *requested_delay,
             ticks_per_nanosecond =
               (double) ticks_per_second.QuadPart / 1000000000.0;
 
-          initialized = true;
+          initialized = 1;
         }
       if (ticks_per_nanosecond)
         {
