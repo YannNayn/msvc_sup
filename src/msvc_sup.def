@@ -21,4 +21,6 @@ EXPORTS
     pgm_if_nametoindex
     rand_rl
     rand_r
+    nanosleep
+    
     
