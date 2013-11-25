@@ -3,6 +3,7 @@
 #include "hsregex.h"
 #include <windows.h>
 #	include <iphlpapi.h>
+#include <time.h>
 #if !defined(IF_NAMESIZE) || (1==1)
 #       ifdef IFNAMSIZ
 #               define IF_NAMESIZE      IFNAMSIZ
@@ -97,6 +98,14 @@ size_t sysconf(int type);
 unsigned int pgm_if_nametoindex (	const char* ifname);
 long long rand_rl(unsigned long long* seed);
 int rand_r(unsigned int* seed);
+
+
+typedef struct timespec {               /* definition per POSIX.4 */
+         time_t          tv_sec;         /* seconds */
+         long            tv_nsec;        /* and nanoseconds */
+ } timespec_t;
+
+int nanosleep (const struct timespec *requested_delay,struct timespec *remaining_delay);
 #ifdef __cplusplus
 }
 #endif
