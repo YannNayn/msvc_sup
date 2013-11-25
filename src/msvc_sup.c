@@ -1,5 +1,5 @@
 #include <fcntl.h>
-#include <msvc_sup.h>
+#include "msvc_sup.h""
 #include <io.h>
 #include <errno.h>
 #include <time.h>
@@ -11,7 +11,6 @@
 //#pragma message("compiling msvc_sup.c ...")
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"iphlpapi.lib")
-#pragma comment(lib,"regex.lib")
 
 #ifndef TRUE
 #   define TRUE 1
@@ -380,7 +379,7 @@ size_t sysconf(int type)
  *
  */
 
-/* Written by Niels Möller <nisse@lysator.liu.se>
+/* Written by Niels Mï¿½ller <nisse@lysator.liu.se>
  *
  * This file is hereby placed in the public domain.
  */
