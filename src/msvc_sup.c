@@ -1100,7 +1100,7 @@ int rand_r(unsigned int* seed)
    Additionally, we use busy-looping over short time periods, to get a
    resolution of about 0.01 ms.  In order to measure such short timespans,
    we use the QueryPerformanceCounter() function.  */
-#define BILLION 1000000000.0
+#define BILLION 1000000000000.0
 int
 nanosleep (const struct timespec *requested_delay,
            struct timespec *remaining_delay)
