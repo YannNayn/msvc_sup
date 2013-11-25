@@ -1151,7 +1151,7 @@ ticks_per_nanosecond;
                  We don't need to worry about overflow, because the performance
                  counter is reset at reboot, and with a frequency of 3.6E6
                  ticks per second 63 bits suffice for over 80000 years.  */
-              LONGLONG wait_until = counter_before.QuadPart  wait_ticks;
+              LONGLONG wait_until = counter_before.QuadPart + wait_ticks;
               /* Use Sleep for the longest part.  */
               if (sleep_millis > 0)
                 Sleep (sleep_millis);
