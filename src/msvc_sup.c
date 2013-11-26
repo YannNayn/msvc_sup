@@ -84,7 +84,7 @@ else
 pathBuffer[0] = 0;
 uniqueNum = GetTempFileName(pathBuffer, "tmp", FILE_FLAG_DELETE_ON_CLOSE , tempFilename);
 strcpy(_template, tempFilename);
-return open(tempFilename, _O_RDWR|_O_BINARY);
+return _open(tempFilename, _O_RDWR|_O_BINARY);
 }
 
 
