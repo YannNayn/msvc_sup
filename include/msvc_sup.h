@@ -1,5 +1,6 @@
 #ifndef __win32_galera_h__
 #define __win32_galera_h__
+#ifdef _MSC_VER
 #include "hsregex.h"
 #include <windows.h>
 #	include <iphlpapi.h>
@@ -148,4 +149,10 @@ int sigaction(int sig, struct sigaction *action, struct sigaction *old);
 #ifdef __cplusplus
 }
 #endif
+
+#define SIZET_PRINTF_SPEC "%lu"
+#else
+#define SIZET_PRINTF_SPEC "%zu"
+#endif
+
 #endif
