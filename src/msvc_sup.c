@@ -46,45 +46,45 @@ int posix_fallocate(int fd, off_t offset, off_t len)
 int
 ftruncate (int fd, off_t size)
 {
-HANDLE hfile;
-unsigned int curpos;
-if (fd < 0)
-return -1;
-hfile = (HANDLE) _get_osfhandle (fd);
-curpos = SetFilePointer (hfile, 0, NULL, FILE_CURRENT);
-if (curpos == 0xFFFFFFFF
-|| SetFilePointer (hfile, size, NULL, FILE_BEGIN) == 0xFFFFFFFF
-|| !SetEndOfFile (hfile))
-{
-int error = GetLastError ();
-switch (error)
-{
-case ERROR_INVALID_HANDLE:
-errno = EBADF;
-break;
-default:
-errno = EIO;
-break;
-}
-return -1;
-}
-return 0;
+	HANDLE hfile;
+	unsigned int curpos;
+	if (fd < 0)
+		return -1;
+	hfile = (HANDLE) _get_osfhandle (fd);
+	curpos = SetFilePointer (hfile, 0, NULL, FILE_CURRENT);
+	if (curpos == 0xFFFFFFFF
+		|| SetFilePointer (hfile, size, NULL, FILE_BEGIN) == 0xFFFFFFFF
+		|| !SetEndOfFile (hfile))
+	{
+		int error = GetLastError ();
+		switch (error)
+		{
+		case ERROR_INVALID_HANDLE:
+			errno = EBADF;
+		break;
+		default:
+			errno = EIO;
+		break;
+		}
+		return -1;
+	}
+	return 0;
 }
 
 int mkstemp(char *_template)
 {
-DWORD pathSize;
-char pathBuffer[1000];
-char tempFilename[MAX_PATH];
-UINT uniqueNum;
-pathSize = GetTempPath( 1000, pathBuffer);
-if (pathSize < 1000)
-pathBuffer[pathSize] = 0;
-else
-pathBuffer[0] = 0;
-uniqueNum = GetTempFileName(pathBuffer, "tmp", FILE_FLAG_DELETE_ON_CLOSE , tempFilename);
-strcpy(_template, tempFilename);
-return _open(tempFilename, _O_RDWR|_O_BINARY);
+	DWORD pathSize;
+	char pathBuffer[1000];
+	char tempFilename[MAX_PATH];
+	UINT uniqueNum;
+	pathSize = GetTempPathA( 1000, pathBuffer);
+	if (pathSize < 1000)
+		pathBuffer[pathSize] = 0;
+	else
+		pathBuffer[0] = 0;
+	uniqueNum = GetTempFileNameA(pathBuffer, "tmp", FILE_FLAG_DELETE_ON_CLOSE , tempFilename);
+	strcpy(_template, tempFilename);
+	return _open(tempFilename, _O_RDWR|_O_BINARY);
 }
 
 
@@ -96,48 +96,48 @@ return _open(tempFilename, _O_RDWR|_O_BINARY);
 #endif
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-FILETIME ft;
-unsigned __int64 tmpres = 0;
-static int tzflag;
-if (NULL != tv)
-{
-GetSystemTimeAsFileTime(&ft);
-tmpres |= ft.dwHighDateTime;
-tmpres <<= 32;
-tmpres |= ft.dwLowDateTime;
-/*converting file time to unix epoch*/
-tmpres -= DELTA_EPOCH_IN_MICROSECS;
-tmpres /= 10; /*convert into microseconds*/
-tv->tv_sec = (long)(tmpres / 1000000UL);
-tv->tv_usec = (long)(tmpres % 1000000UL);
-}
-if (NULL != tz)
-{
-if (!tzflag)
-{
-_tzset();
-tzflag++;
-}
-tz->tz_minuteswest = _timezone / 60;
-tz->tz_dsttime = _daylight;
-}
-return 0;
+	FILETIME ft;
+	unsigned __int64 tmpres = 0;
+	static int tzflag;
+	if (NULL != tv)
+	{
+		GetSystemTimeAsFileTime(&ft);
+		tmpres |= ft.dwHighDateTime;
+		tmpres <<= 32;
+		tmpres |= ft.dwLowDateTime;
+		/*converting file time to unix epoch*/
+		tmpres -= DELTA_EPOCH_IN_MICROSECS;
+		tmpres /= 10; /*convert into microseconds*/
+		tv->tv_sec = (long)(tmpres / 1000000UL);
+		tv->tv_usec = (long)(tmpres % 1000000UL);
+	}
+	if (NULL != tz)
+	{
+		if (!tzflag)
+		{
+			_tzset();
+			tzflag++;
+		}
+		tz->tz_minuteswest = _timezone / 60;
+		tz->tz_dsttime = _daylight;
+	}
+	return 0;
 }
 struct tm * gmtime_r(const time_t *clock, struct tm *result)
 {
-memcpy( result, gmtime(clock), sizeof(struct tm) );
-return result;
+	memcpy( result, gmtime(clock), sizeof(struct tm) );
+	return result;
 }
 struct tm * localtime_r(const time_t *clock, struct tm *result)
 {
-memcpy( result, localtime(clock), sizeof(struct tm) );
-return result;
+	memcpy( result, localtime(clock), sizeof(struct tm) );
+	return result;
 }
 struct tm * localtime_rl(const long *clock, struct tm *result)
 {
     time_t cl=(time_t)*clock;
-memcpy( result, localtime(&cl), sizeof(struct tm) );
-return result;
+	memcpy( result, localtime(&cl), sizeof(struct tm) );
+	return result;
 }
 
 #define PROT_NONE       0
