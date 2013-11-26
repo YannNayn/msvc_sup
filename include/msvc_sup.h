@@ -1,5 +1,5 @@
-#ifndef __win32_galera_h__
-#define __win32_galera_h__
+#ifndef __msvc_sup_h__
+#define __msvc_sup_h__
 #ifdef _MSC_VER
 #include "hsregex.h"
 #include <windows.h>
@@ -161,4 +161,4 @@ int sigaction(int sig, struct sigaction *action, struct sigaction *old);
 
 
 
-#endif
+#endif // __msvc_sup_h__
