@@ -341,6 +341,16 @@ int munlock(const void *addr, size_t len)
 #define _SC_AVPHYS_PAGES 4
 #define _SC_PAGE_SIZE _SC_PAGESIZE
 size_t szPageSize=0;
+__inline size_t getpagesize()
+{
+	if (szPageSize == 0)
+    {
+        SYSTEM_INFO SystemInfo;
+        GetSystemInfo( &SystemInfo );
+        szPageSize = (size_t)SystemInfo.dwPageSize;
+    }
+	return szPageSize;
+}
 size_t sysconf(int type)
 {
     switch (type) 
@@ -348,27 +358,21 @@ size_t sysconf(int type)
     {
         case _SC_PAGESIZE:
         {
-            if (szPageSize == 0)
-            {
-                SYSTEM_INFO SystemInfo;
-                GetSystemInfo( &SystemInfo );
-                szPageSize = (size_t)SystemInfo.dwPageSize;
-            }
-            return szPageSize;
+            return getpagesize();
         }
         case _SC_PHYS_PAGES:
         {
             MEMORYSTATUSEX statex;
             statex.dwLength = sizeof (statex);
             GlobalMemoryStatusEx (&statex);
-            return statex.ullTotalPhys/szPageSize;
+            return statex.ullTotalPhys/getpagesize();
         }
         case _SC_AVPHYS_PAGES:
         {
             MEMORYSTATUSEX statex;
             statex.dwLength = sizeof (statex);
             GlobalMemoryStatusEx (&statex);
-            return statex.ullAvailPhys/szPageSize;
+            return statex.ullAvailPhys/getpagesize();
         }
         default:
             return (size_t)0;
