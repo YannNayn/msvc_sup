@@ -138,6 +138,11 @@ struct sigaction
 };
 #endif //_SIGACTION_DEFINED
 
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+typedef int ssize_t;
+#endif
+
 int sigaction(int sig, struct sigaction *action, struct sigaction *old);
 
 #ifdef __cplusplus
