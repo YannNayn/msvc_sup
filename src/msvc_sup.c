@@ -87,8 +87,64 @@ int mkstemp(char *_template)
 	return _open(tempFilename, _O_RDWR|_O_BINARY);
 }
 
+#if 1 == 1
+//from libevent
+/* No gettimeofday; this must be windows. */
+#if defined(__GNUC__) && __GNUC__ >= 3         /* gcc 3.0 or later */
+#define EVUTIL_UNLIKELY(p) __builtin_expect(!!(p),0)
+#else
+#define EVUTIL_UNLIKELY(p) (p)
+#endif
+int
+gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+	static int tzflag;
+#ifdef _MSC_VER
+#define U64_LITERAL(n) n##ui64
+#else
+#define U64_LITERAL(n) n##llu
+#endif
 
-#if 1 ==1
+	/* Conversion logic taken from Tor, which in turn took it
+	 * from Perl.  GetSystemTimeAsFileTime returns its value as
+	 * an unaligned (!) 64-bit value containing the number of
+	 * 100-nanosecond intervals since 1 January 1601 UTC. */
+#define EPOCH_BIAS U64_LITERAL(116444736000000000)
+#define UNITS_PER_SEC U64_LITERAL(10000000)
+#define USEC_PER_SEC U64_LITERAL(1000000)
+#define UNITS_PER_USEC U64_LITERAL(10)
+	union {
+		FILETIME ft_ft;
+		unsigned __int64 ft_64;
+	} ft;
+
+	if (tv != NULL)
+	{
+
+		GetSystemTimeAsFileTime(&ft.ft_ft);
+
+		if (EVUTIL_UNLIKELY(ft.ft_64 < EPOCH_BIAS)) {
+			/* Time before the unix epoch. */
+			return -1;
+		}
+		ft.ft_64 -= EPOCH_BIAS;
+		tv->tv_sec = (long) (ft.ft_64 / UNITS_PER_SEC);
+		tv->tv_usec = (long) ((ft.ft_64 / UNITS_PER_USEC) % USEC_PER_SEC);
+	}
+	if (NULL != tz)
+	{
+		if (!tzflag)
+		{
+			_tzset();
+			tzflag++;
+		}
+		tz->tz_minuteswest = _timezone / 60;
+		tz->tz_dsttime = _daylight;
+	}
+
+	return 0;
+}
+#elif 1 ==-1
 
 /* FILETIME of Jan 1 1970 00:00:00. */
 static const unsigned __int64 epoch = 11644473600000000Ui64;
