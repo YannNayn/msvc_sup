@@ -149,11 +149,12 @@ int sigaction(int sig, struct sigaction *action, struct sigaction *old);
 #ifdef __cplusplus
 }
 #endif
-
+#define SSIZET_PRINTF_SPEC "%ld"
 #define SIZET_PRINTF_SPEC "%lu"
 #define DIR_SEP_S "\\"
 #define DIR_SEP_C '\\'
 #else
+#define SSIZET_PRINTF_SPEC "%zd"
 #define SIZET_PRINTF_SPEC "%zu"
 #define DIR_SEP_S "/"
 #define DIR_SEP_C '/'
