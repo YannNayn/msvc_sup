@@ -135,8 +135,9 @@ struct tm * localtime_r(const time_t *clock, struct tm *result)
 }
 struct tm * localtime_rl(const long *clock, struct tm *result)
 {
-    __time32_t cl=(__time32_t)*clock;
-	memcpy( result, _localtime32(&cl), sizeof(struct tm) );
+    __time32_t *cl=(__time32_t *)clock;
+	struct tm *local_tm=_localtime32(cl);
+	memcpy( result, local_tm, sizeof(struct tm) );
 	return result;
 }
 
