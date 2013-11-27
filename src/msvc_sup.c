@@ -88,7 +88,37 @@ int mkstemp(char *_template)
 }
 
 
+#if 1 ==1
 
+/* FILETIME of Jan 1 1970 00:00:00. */
+static const unsigned __int64 epoch = 11644473600000000Ui64;
+
+
+/*
+ * timezone information is stored outside the kernel so tzp isn't used anymore.
+ *
+ * Note: this function is not for Win32 high precision timing purpose. See
+ * elapsed_time().
+ */
+int
+gettimeofday(struct timeval * tp, struct timezone * tzp) {
+  FILETIME file_time;
+  SYSTEMTIME system_time;
+  ULARGE_INTEGER ularge;
+
+  GetSystemTime(&system_time);
+  SystemTimeToFileTime(&system_time, &file_time);
+  ularge.LowPart = file_time.dwLowDateTime;
+  ularge.HighPart = file_time.dwHighDateTime;
+
+  tp->tv_sec = (long)((ularge.QuadPart - epoch) / 10000000L);
+  tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+
+  return 0;
+}
+
+
+#else
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
 #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
 #else
@@ -123,6 +153,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 	}
 	return 0;
 }
+#endif
 struct tm * gmtime_r(const time_t *clock, struct tm *result)
 {
 	memcpy( result, gmtime(clock), sizeof(struct tm) );
