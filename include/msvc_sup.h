@@ -140,8 +140,12 @@ struct sigaction
 #endif //_SIGACTION_DEFINED
 
 #ifndef _SSIZE_T_DEFINED
-#define _SSIZE_T_DEFINED
-typedef int ssize_t;
+#ifdef  _WIN64
+typedef __int64    ssize_t;
+#else
+typedef _W64 int   ssize_t;
+#endif
+#define _SIZE_T_DEFINED
 #endif
 
 int sigaction(int sig, struct sigaction *action, struct sigaction *old);
