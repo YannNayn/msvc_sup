@@ -1307,10 +1307,3 @@ int sigaction(int sig, struct sigaction *action, struct sigaction *old)
     return 0;
 }
 
-char *strndup( const char *s,int len)
-{
-	char *ret=malloc(len+1);
-	strncpy(ret,s,len);
-	ret[len] = '\0';
-	return ret;
-}
