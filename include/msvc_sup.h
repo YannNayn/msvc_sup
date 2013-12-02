@@ -150,6 +150,8 @@ typedef _W64 int   ssize_t;
 
 int sigaction(int sig, struct sigaction *action, struct sigaction *old);
 
+char *strndup( const char *s,int len);
+
 #ifdef __cplusplus
 }
 #endif
