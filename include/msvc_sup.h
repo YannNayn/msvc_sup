@@ -152,6 +152,9 @@ int sigaction(int sig, struct sigaction *action, struct sigaction *old);
 
 char *strndup( const char *s,size_t len);
 
+char **get_environment(void);
+int free_environment(char **);
+
 #ifdef __cplusplus
 }
 #endif

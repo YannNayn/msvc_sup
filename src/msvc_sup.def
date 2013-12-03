@@ -27,3 +27,5 @@ EXPORTS
     
     strndup
     
+    get_environment
+    free_environment
