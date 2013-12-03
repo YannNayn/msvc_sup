@@ -1,7 +1,7 @@
 #ifndef __msvc_sup_h__
 #define __msvc_sup_h__
 #ifdef _MSC_VER
-#include "hsregex.h"
+//#include "hsregex.h"
 #include <windows.h>
 #	include <iphlpapi.h>
 #include <time.h>
