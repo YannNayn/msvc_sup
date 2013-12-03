@@ -167,7 +167,8 @@ int free_environment(char **);
 #define DIR_SEP_S "/"
 #define DIR_SEP_C '/'
 #endif
-
-
+#ifndef BUILDING_MSVC_SUP
+#pragma comment(lib,"msvc_sup.lib")
+#endif
 
 #endif // __msvc_sup_h__
