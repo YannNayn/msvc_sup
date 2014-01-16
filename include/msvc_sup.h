@@ -36,11 +36,14 @@ struct pgm_ifaddrs_t
 
 int getifaddrs (struct pgm_ifaddrs_t**);
 void freeifaddrs (struct pgm_ifaddrs_t*);
+#ifndef _TIMEZONE_DEFINED
+#define _TIMEZONE_DEFINED
 struct timezone
 {
 int tz_minuteswest; /* minutes W of Greenwich */
 int tz_dsttime; /* type of dst correction */
 };
+#endif /* _TIMEZONE_DEFINED */
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 typedef long off_t;
 int posix_fallocate(int fd, off_t offset, off_t len);
