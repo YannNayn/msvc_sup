@@ -318,16 +318,28 @@ USE_RES_FILE = TRUE
 RC_CMD       = $(RC_CMD_DBG)
 !ENDIF
 
-CSOURCES=$(SRCDIR)\msvc_sup.c  $(SRCDIR)\mbchar.c $(SRCDIR)\mbssep.c $(SRCDIR)\strsep.c
+CSOURCES=$(SRCDIR)\msvc_sup.c \
+                    $(SRCDIR)\mbchar.c \
+                    $(SRCDIR)\mbssep.c \
+                    $(SRCDIR)\strsep.c \
+                    $(SRCDIR)\mbchar.c \
+                    $(SRCDIR)\mbspbrk.c \
+                    $(SRCDIR)\mbschr.c \
+                    $(SRCDIR)\strnlen1.c
 
 # ----------------------------
 # Build lists of object files
 # ----------------------------
 
-!IF "$(VALID_CFGSET)" == "TRUE"
 
-
-WIN32_OBJS = $(WIN32_OBJDIR)\msvc_sup.obj  $(WIN32_OBJDIR)\mbchar.obj $(WIN32_OBJDIR)\mbssep.obj $(WIN32_OBJDIR)\strsep.obj
+WIN32_OBJS = $(WIN32_OBJDIR)\msvc_sup.obj  \
+                        $(WIN32_OBJDIR)\mbchar.obj \
+                        $(WIN32_OBJDIR)\mbssep.obj \
+                        $(WIN32_OBJDIR)\strsep.obj \
+                        $(WIN32_OBJDIR)\mbchar.obj \
+                        $(WIN32_OBJDIR)\mbspbrk.obj \
+                        $(WIN32_OBJDIR)\mbschr.obj \
+                        $(WIN32_OBJDIR)\strnlen1.obj
 
 !ENDIF
 
