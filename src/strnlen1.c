@@ -1,4 +1,5 @@
-/* Copyright (C) 2001, 2006, 2009-2013 Free Software Foundation, Inc.
+/* Find the length of STRING + 1, but scan at most MAXLEN bytes.
+   Copyright (C) 2005-2006, 2009-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,27 +14,24 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#define MBCHAR_INLINE _GL_EXTERN_INLINE
+/* Specification.  */
+#include "strnlen1.h"
 
-#include <limits.h>
+#include <string.h>
 
-#include "mbchar.h"
-
-#if IS_BASIC_ASCII
-
-/* Bit table of characters in the ISO C "basic character set".  */
-const unsigned int is_basic_table [UCHAR_MAX / 32 + 1] =
+/* Find the length of STRING + 1, but scan at most MAXLEN bytes.
+   If no '\0' terminator is found in that many characters, return MAXLEN.  */
+/* This is the same as strnlen (string, maxlen - 1) + 1.  */
+size_t
+strnlen1 (const char *string, size_t maxlen)
 {
-  0x00001a00,           /* '\t' '\v' '\f' */
-  0xffffffef,           /* ' '...'#' '%'...'?' */
-  0xfffffffe,           /* 'A'...'Z' '[' '\\' ']' '^' '_' */
-  0x7ffffffe            /* 'a'...'z' '{' '|' '}' '~' */
-  /* The remaining bits are 0.  */
-};
-
-#endif /* IS_BASIC_ASCII */
+  const char *end = (const char *) memchr (string, '\0', maxlen);
+  if (end != NULL)
+    return end - string + 1;
+  else
+    return maxlen;
+}
