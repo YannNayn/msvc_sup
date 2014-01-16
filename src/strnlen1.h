@@ -24,7 +24,9 @@
 extern "C" {
 #endif
 
-
+#ifndef _GL_ATTRIBUTE_PURE
+#define _GL_ATTRIBUTE_PURE
+#endif
 /* Find the length of STRING + 1, but scan at most MAXLEN bytes.
    If no '\0' terminator is found in that many characters, return MAXLEN.  */
 /* This is the same as strnlen (string, maxlen - 1) + 1.  */
