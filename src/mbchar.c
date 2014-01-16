@@ -17,9 +17,9 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-
+#ifdef _GL_EXTERN_INLINE
 #define MBCHAR_INLINE _GL_EXTERN_INLINE
-
+#endif
 #include <limits.h>
 
 #include "mbchar.h"
