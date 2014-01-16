@@ -1,3 +1,4 @@
+f.c
 #from c-ares Makefile.msvc : here it comes
 # Copyright (C) 2009-2013 by Daniel Stenberg
 #
@@ -317,7 +318,7 @@ USE_RES_FILE = TRUE
 RC_CMD       = $(RC_CMD_DBG)
 !ENDIF
 
-CSOURCES=$(SRCDIR)\msvc_sup.c
+CSOURCES=$(SRCDIR)\msvc_sup.c $(SRCDIR)\mbssep.c $(SRCDIR)\strsep.c
 
 # ----------------------------
 # Build lists of object files
@@ -326,7 +327,7 @@ CSOURCES=$(SRCDIR)\msvc_sup.c
 !IF "$(VALID_CFGSET)" == "TRUE"
 
 
-WIN32_OBJS = $(WIN32_OBJDIR)\msvc_sup.obj
+WIN32_OBJS = $(WIN32_OBJDIR)\msvc_sup.obj $(WIN32_OBJDIR)\mbssep.obj $(WIN32_OBJDIR)\strsep.obj
 
 !ENDIF
 

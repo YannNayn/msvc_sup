@@ -29,3 +29,6 @@ EXPORTS
     
     get_environment
     free_environment
+    
+    strsep
+    mbssep

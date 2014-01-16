@@ -154,6 +154,13 @@ char *strndup( const char *s,size_t len);
 char **get_environment(void);
 int free_environment(char **);
 
+char *
+strsep (char **stringp, const char *delim);
+
+
+char *
+mbssep (char **stringp, const char *delim);
+
 #ifdef __cplusplus
 }
 #endif
